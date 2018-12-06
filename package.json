@@ -1,12 +1,15 @@
 {
   "name": "electron-webpack-quick-start",
+  "description": "App to test electrons security scoped bookmarks",
+  "author": "rrosen326@gmail.com",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
     "dist": "yarn compile && electron-builder",
-    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null"
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
     "source-map-support": "^0.5.9",
@@ -19,5 +22,23 @@
     "electron-webpack-vue": "^2.2.2",
     "vue": "^2.5.17",
     "webpack": "^4.26.0"
+  },
+  "build": {
+    "extends": "node_modules/electron-webpack/out/electron-builder.js",
+    "appId": "com.k2companyllc.bookmarktest",
+    "productName": "Electron Security Scoped Bookmark Test App",
+    "mac": {
+      "type": "development",
+      "category": "public.app-category.developer-tools",
+      "target": ["dmg", "mas"] 
+      ,"entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.inherit.plist",
+      "provisioningProfile": "build/security_scoped_bookmark_pp_mac_development.provisionprofile"    
+    }
+  },
+  "comments": {
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.inherit.plist",
+      "provisioningProfile": "build/security_scoped_bookmark_pp_mac_development.provisionprofile"     
   }
 }
