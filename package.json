@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
-    "dist": "yarn compile && electron-builder",
+    "dist": "rm -rf dist/* && yarn compile && electron-builder",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "electron-builder install-app-deps"
   },
@@ -16,7 +16,7 @@
     "vue-loader": "^15.4.2"
   },
   "devDependencies": {
-    "electron": "3.0.10",
+    "electron": "=4.0.0-beta.8",
     "electron-builder": "^20.36.2",
     "electron-webpack": "^2.6.1",
     "electron-webpack-vue": "^2.2.2",
@@ -26,12 +26,12 @@
   "build": {
     "extends": "node_modules/electron-webpack/out/electron-builder.js",
     "appId": "com.k2companyllc.bookmarktest",
-    "productName": "Electron Security Scoped Bookmark Test App",
+    "productName": "ElectronSecurityScopedBookmarkTestApp",
     "mac": {
       "type": "development",
       "category": "public.app-category.developer-tools",
-      "target": ["dmg", "mas"] 
-      ,"entitlements": "build/entitlements.mac.plist",
+      "target": ["dir", "mas"],
+      "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.inherit.plist",
       "provisioningProfile": "build/security_scoped_bookmark_pp_mac_development.provisionprofile"    
     }

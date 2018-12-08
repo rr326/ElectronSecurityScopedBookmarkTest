@@ -1,46 +1,15 @@
-# electron-webpack-quick-start
-> A bare minimum project structure to get started developing with [`electron-webpack`](https://github.com/electron-userland/electron-webpack).
+# Electron Security Scoped Bookmark Test App
 
-Thanks to the power of `electron-webpack` this template comes packed with...
+I had a TON of trouble getting security scoped bookmarks to work, as per [this pr](https://github.com/electron/electron/pull/11711).
+I built this little test app to show how it wasn't work, and lo and behold, it worked! So then I was able to 
+track down on my real app where I went wrong.  
 
-* Use of [`webpack-dev-server`](https://github.com/webpack/webpack-dev-server) for development
-* HMR for both `renderer` and `main` processes
-* Use of [`babel-preset-env`](https://github.com/babel/babel-preset-env) that is automatically configured based on your `electron` version
-* Use of [`electron-builder`](https://github.com/electron-userland/electron-builder) to package and build a distributable electron application
+So the first thing to do is get this to build and work properly. You'll need a proper app bundle id from apple, signing certificates, a provisioning profile,  etc.
+The scope of describing all of that is too much for here. But if you get all of that to work, then you'll see your dist/mas build work.  Then go back and see what differs in 
+your real repo.  
 
-Make sure to check out [`electron-webpack`'s documentation](https://webpack.electron.build/) for more details.
+The thing that killed me:  
+* I used a small python helper app to open my many different built applications. eg: `fs opd === open dist_masdev/mas/FileSimple.app`.  It was a great convenience.
+* Incredibly, that was my problem for some reason bookmarks do NOT work in that sitution, but if I open directly from the shell, they work. So maddening. 
 
-## Getting Started
-Simply clone down this reposity, install dependencies, and get started on your application.
-
-The use of the [yarn](https://yarnpkg.com/) package manager is **strongly** recommended, as opposed to using `npm`.
-
-```bash
-# create a directory of your choice, and copy template using curl
-mkdir new-electron-webpack-project && cd new-electron-webpack-project
-curl -fsSL https://github.com/electron-userland/electron-webpack-quick-start/archive/master.tar.gz | tar -xz --strip-components 1
-
-# or copy template using git clone
-git clone https://github.com/electron-userland/electron-webpack-quick-start.git
-cd electron-webpack-quick-start
-rm -rf .git
-
-# install dependencies
-yarn
-```
-
-### Development Scripts
-
-```bash
-# run application in development mode
-yarn dev
-
-# compile source code and create webpack output
-yarn compile
-
-# `yarn compile` & create build with electron-builder
-yarn dist
-
-# `yarn compile` & create unpacked build with electron-builder
-yarn dist:dir
-```
+Good luck on your debugging!
