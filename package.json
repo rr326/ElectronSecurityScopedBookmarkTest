@@ -30,7 +30,7 @@
     "mac": {
       "type": "development",
       "category": "public.app-category.developer-tools",
-      "target": ["dir", "mas"],
+      "target": ["dmg", "mas"],
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.inherit.plist",
       "provisioningProfile": "build/security_scoped_bookmark_pp_mac_development.provisionprofile"    
