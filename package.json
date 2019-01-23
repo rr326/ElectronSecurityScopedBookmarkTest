@@ -1,25 +1,31 @@
 {
-  "name": "electron-webpack-quick-start",
+  "name": "electron-security-scoped-bookmark-test",
   "description": "App to test electrons security scoped bookmarks",
   "author": "rrosen326@gmail.com",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "scripts": {
+    "bumpversion": "npm version --no-git-tag-version patch",
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
+    "predist": "yarn bumpversion",
     "dist": "rm -rf dist/* && yarn compile && electron-builder",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
     "source-map-support": "^0.5.9",
     "vue-loader": "^15.4.2"
   },
   "devDependencies": {
+    "css-loader": "^2.1.0",
     "electron": "=4.0.0-beta.8",
     "electron-builder": "^20.36.2",
     "electron-webpack": "^2.6.1",
     "electron-webpack-vue": "^2.2.2",
+    "style-loader": "^0.23.1",
     "vue": "^2.5.17",
     "webpack": "^4.26.0"
   },
@@ -30,15 +36,13 @@
     "mac": {
       "type": "development",
       "category": "public.app-category.developer-tools",
-      "target": ["dmg", "mas"],
+      "target": [
+        "dir",
+        "mas"
+      ],
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.inherit.plist",
-      "provisioningProfile": "build/security_scoped_bookmark_pp_mac_development.provisionprofile"    
+      "provisioningProfile": "build/security_scoped_bookmark_pp_mac_development.provisionprofile"
     }
-  },
-  "comments": {
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.inherit.plist",
-      "provisioningProfile": "build/security_scoped_bookmark_pp_mac_development.provisionprofile"     
   }
 }
