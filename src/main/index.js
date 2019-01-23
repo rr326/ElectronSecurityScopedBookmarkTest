@@ -10,8 +10,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let mainWindow
 
 function createMainWindow() {
-  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize
-  const window = new BrowserWindow({ width, height })
+  const workarea = electron.screen.getPrimaryDisplay().workAreaSize
+  const window = new BrowserWindow({width: workarea.width/2, height: workarea.height})
 
   if (isDevelopment) {
     window.webContents.openDevTools()

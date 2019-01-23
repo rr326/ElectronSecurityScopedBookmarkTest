@@ -1,65 +1,85 @@
 <template>
   <div class="container-fluid">
     <h1>Test of Mac MAS Build Security Scoped Bookmarks</h1>
-    <p>The only complete documentation is the <a href="https://github.com/electron/electron/pull/11711">Github PR</a>, though there is also some in the <a href="https://electronjs.org/docs/api/dialog#dialogshowopendialogbrowserwindow-options-callback">docs</a>.</p>
-    <p>This tests the implementation of security scoped bookmarks. These are necessary for building MAS (Mac App Store) builds. </p>
-    <h3>Expectations</h3>
-    <ul>
-      <li>In non-MAS build, Bookmarks == []</li>
-      <li>In MAS build:
-        <ul>
-          <li>No error: Bookmarks == [bookmark] (array of bookmarks)</li>
-          <li>Error: Bookmarks == '' (ie: String, not array)</li>
-        </ul>
-      </li>
-    </ul>
-    <h3>This DOES work. </h3>
-    <p>Tested with Electron 4.0.0-beta.8. It probably works with 3.x.x as well, but I have not tested it.</p>
-    <p>If you are having problmems and getting a empty bookmark list with MAS, it means something else is going on.</p>
     <br>
-    <hr>
+
+    <div class="card card-body bg-light explanation-block">
+      <h3>Overview</h3>
+      <p>This tests the implementation of security scoped bookmarks. These are necessary for building MAS (Mac App Store) builds. The only complete documentation is the <a href="https://github.com/electron/electron/pull/11711">Github PR</a>, though there is also some in the <a href="https://electronjs.org/docs/api/dialog#dialogshowopendialogbrowserwindow-options-callback">docs</a>.</p>
+      <h3>Expectations</h3>
+      <ul>
+        <li>In non-MAS build, Bookmarks == []</li>
+        <li>In MAS build:
+          <ul>
+            <li>No error: Bookmarks == [bookmark] (array of bookmarks)</li>
+            <li>Error: Bookmarks == '' (ie: String, not array)</li>
+          </ul>
+        </li>
+      </ul>
+      <h3>This DOES work. </h3>
+      <p>Tested with Electron 4.0.0-beta.8. It probably works with 3.x.x as well, but I have not tested it.</p>
+      <p>If you are having problmems and getting a empty bookmark list with MAS, it means something else is going on.</p>
+    </div> <br>
     <h3>Bookmarks</h3>
-    <table class='info-table'>
-      <tbody>
-        <tr>
-          <td>Bookmarks set</td>
-          <td>{{bookmarks_set}}</td>
-        </tr>
-        <tr>
-          <td>Bookmarks</td>
-          <td>{{bookmarks}}</td>
-        </tr>
-        <tr>
-          <td>Bookmarks typeof</td>
-          <td>{{typeof bookmarks}}</td>
-        </tr>
+    <div class="info-table">
+      <table class='table table-striped'>
+        <tbody>
+          <tr>
+            <td>Bookmarks set</td>
+            <td>{{bookmarks_set}}</td>
+          </tr>
+          <tr>
+            <td>Bookmarks</td>
+            <td class="no-overflow">{{bookmarks}}</td>
+          </tr>
+          <tr>
+            <td>Bookmarks typeof</td>
+            <td>{{typeof bookmarks}}</td>
+          </tr>
         </tbody>
-        </table> 
-        <br>
-        <h3>Environment</h3>
-        <table class='info-table'>
-      <tbody>
-        <tr>
-          <td>isMas</td>
-          <td>{{isMas}}</td>
-        </tr>
-        <tr>
-          <td>isSandboxed</td>
-          <td>{{isSandboxed}}</td>
-        </tr>
-        <tr>
-          <td>userDataPath</td>
-          <td>{{userDataPath}}</td>
-        </tr>
-      </tbody>
-    </table>
+      </table>
 
-    <button type='button' class="btn btn-primary center-block" @click='showOpenDialog'> Click to select directory </button>
-    <button type='button' class="btn btn-reset center-block" @click='reset'> Reset </button>
+    </div>
+    <br>
+
+    <button type='button' class="btn btn-primary" @click='showOpenDialog'> Click to select directory </button>
+    <button type='button' class="btn btn-secondary" @click='reset'> Reset </button>
     <br>
     <br>
-    <hr>
+    <div v-if="bookmarks_set">
+      <h3>Results</h3>
+      <div class="alert alert-success" v-if="isMas && bookmarks_set && validBookmarks">Bookmark properly returned</div>
+      <div class="alert alert-warning" v-if="!isMas && bookmarks_set">Not MAS build. Bookmarks not set.</div>
+      <div class="alert alert-danger" v-if="isMas && bookmarks_set && !validBookmarks">
+        <h4>Invalid bookmarks returned</h4>
+        <p><b>Bookmarks: </b> |{{this.bookmarks}}|</p>
+        <p>Explanation:
+          <span v-if="this.bookmarks==''">Empty string - Error returned from openDialog</span>
+          <span v-if="this.bookmarks!=''"><b>UNEXPECTED</b> Error - non-string. typeof this.bookmarks: {{typeof this.bookmarks}}</span>
+        </p>
+      </div>
+    </div>
 
+    <br>
+    <div class='info-table'>
+      <h3>Environment</h3>
+      <table class='table table-striped'>
+        <tbody>
+          <tr>
+            <td>isMas</td>
+            <td class="alert" :class="{'alert-success': isMas, 'alert-warning': !isMas}">{{isMas}}</td>
+          </tr>
+          <tr>
+            <td>isSandboxed</td>
+            <td class="alert" :class="{'alert-success': isSandboxed, 'alert-warning': !isSandboxed}">{{isSandboxed}}</td>
+          </tr>
+          <tr>
+            <td>userDataPath</td>
+            <td>{{userDataPath}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
   </div>
 </template>
@@ -75,7 +95,7 @@ export default {
   data() {
     return {
       bookmarks: null,
-      bookmarks_set: null,
+      bookmarks_set: false,
       bookmarks_extra_param: null
     }
   },
@@ -85,9 +105,9 @@ export default {
   methods: {
     reset() {
       this.bookmarks = ['this', 'is', 'not', 'initialized', {
-        data: 'seriously'
-      }],
-      this.bookmarks_set = "not set"
+          data: 'seriously'
+        }],
+        this.bookmarks_set = false
       this.bookmarks_extra_param = "not set"
     },
     showOpenDialog() {
@@ -121,6 +141,9 @@ export default {
     },
     userDataPath() {
       return app.getPath('userData')
+    },
+    validBookmarks() {
+      return this.bookmarks && this.bookmarks instanceof Array && this.bookmarks.length == 1 && typeof this.bookmarks[0] == "string"
     }
   }
 }
@@ -128,64 +151,23 @@ export default {
 </script>
 
 <style lang="scss">
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #212529;
-  text-align: left;
-  background-color: #fff;
-}
-
-
 .container-fluid {
-  margin: 20px;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding: 20px 30px !important;
 }
 
-.btn {
-  display: inline-block;
-  font-weight: 400;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  border: 1px solid transparent;
-  padding: .375rem .75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  border-radius: .25rem;
-  transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-}
+.info-table {
+  max-width: 1000px;
 
-.btn-primary {
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff;
-}
-
-.btn-reset {
-  color: #fff;
-  background-color: orange;
-  border-color: orange;
-}
-
-table.info-table {
-  padding: 10px 0px;
-
-  td {
-    padding: 3px 7px;
+  .no-overflow {
+    word-break: break-all;
   }
+}
 
+.explanation-block {
+  font-size: .9em;
 
-  tbody tr:nth-child(odd) {
-    background: #eee;
+  h3 {
+    font-size: 1.5em;
   }
 }
 </style>

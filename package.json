@@ -2,7 +2,7 @@
   "name": "electron-security-scoped-bookmark-test",
   "description": "App to test electrons security scoped bookmarks",
   "author": "rrosen326@gmail.com",
-  "version": "0.1.0",
+  "version": "0.1.10",
   "license": "MIT",
   "scripts": {
     "bumpversion": "npm version --no-git-tag-version patch",
@@ -14,7 +14,10 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "bootstrap": "^4.2.1",
+    "jquery": "^3.3.1",
     "node-sass": "^4.11.0",
+    "popper.js": "^1.14.6",
     "sass-loader": "^7.1.0",
     "source-map-support": "^0.5.9",
     "vue-loader": "^15.4.2"
@@ -38,6 +41,7 @@
       "category": "public.app-category.developer-tools",
       "target": [
         "dir",
+        "dmg",
         "mas"
       ],
       "entitlements": "build/entitlements.mac.plist",
