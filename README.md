@@ -8,8 +8,6 @@ So the first thing to do is get this to build and work properly. You'll need a p
 The scope of describing all of that is too much for here. But if you get all of that to work, then you'll see your dist/mas build work.  (A bookmark will be properly returned.) 
 Then go back and see what differs in your real repo.  
 
-The thing that killed me:  
-* I used a small python helper app to open my many different built applications. eg: `fs opd === open dist_masdev/mas/FileSimple.app`.  It was a great convenience.
-* Incredibly, that was my problem. For some reason bookmarks do NOT work in that sitution, but if I open directly from the shell, they work. So maddening. 
+Note - you should test your mas-dev build both on your development machine, but also on a separate, clean machine. Ideally a separate physical machine if you have one but a Virtual Machine should be fine. (Though if you get into problems on a VM you start wondering if it is the VM or the app. And I've found getting VMs bot build properly is a huge project in iteself. Nothing is easy!)
 
 Good luck on your debugging!

@@ -5,3 +5,4 @@ thumbs.db
 build/*.provisionprofile
 yarn-error.log
 tmp/
+\~*

@@ -70,10 +70,6 @@
             <td class="alert" :class="{'alert-success': isMas, 'alert-warning': !isMas}">{{isMas}}</td>
           </tr>
           <tr>
-            <td>isSandboxed</td>
-            <td class="alert" :class="{'alert-success': isSandboxed, 'alert-warning': !isSandboxed}">{{isSandboxed}}</td>
-          </tr>
-          <tr>
             <td>userDataPath</td>
             <td>{{userDataPath}}</td>
           </tr>
@@ -135,9 +131,6 @@ export default {
   computed: {
     isMas() {
       return Boolean(process.mas)
-    },
-    isSandboxed() {
-      return Boolean(process.sandboxed)
     },
     userDataPath() {
       return app.getPath('userData')
