@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+
+import click
+import subprocess as sp
+from pathlib import Path
+
+# Globals
+ROOTP = Path(__file__).parent.parent
+DIST = ROOTP / 'dist'
+
+
+@click.group()
+def cli():
+    pass
+
+def title(description):
+    print("\n"+"*"*90)
+    print('***** {0}'.format(description))
+
+
+def subtitle(description):
+    print("\n"+"-"*40)
+    print('----- {0}'.format(description))
+
+
+def print_cmd(cmd):
+    print('command: ' + ' '.join(cmd))
+
+        
+def print_and_run(command, shell):
+    if type(command) is list:
+        print_cmd(command)
+    else:
+        print(command)
+    return sp.run(command, shell=shell)
+
+
+def get_all_apps():
+    return DIST.glob('**/ElectronSecurityScopedBookmarkTestApp.app')
+
+@cli.command()
+def gatekeeper():
+    title('Gatekeeper')
+    for app in get_all_apps():
+        subtitle(f'{str(app)}')
+        print_and_run(['spctl', '--assess', '--type', 'exec', '--verbose=4', str(app)], False)
+    
+
+if __name__ == "__main__":
+    cli()

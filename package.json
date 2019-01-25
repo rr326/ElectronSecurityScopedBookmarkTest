@@ -2,16 +2,17 @@
   "name": "electron-security-scoped-bookmark-test",
   "description": "App to test electrons security scoped bookmarks",
   "author": "rrosen326@gmail.com",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "license": "MIT",
   "scripts": {
     "bumpversion": "npm version --no-git-tag-version patch",
+    "cleandist": "rm -rf dist && mkdir dist && echo $npm_package_version > dist/VERSION.txt && git rev-parse HEAD > dist/COMMIT.txt",
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
     "predist": "yarn bumpversion",
-    "dist": "rm -rf dist/* && yarn compile && electron-builder -c.mac.identity=null -c.mas.identity=null  ; if [[ $? -eq 1 ]]; then echo 'IGNORE CODESIGNING ERROR'; fi",
+    "dist": "yarn cleandist && yarn compile && electron-builder -c.mac.identity=null -c.mas.identity=null  ; if [[ $? -eq 1 ]]; then echo 'IGNORE CODESIGNING ERROR'; fi",
     "postdist": "yarn codesign_masdev && yarn codesign_macdev",
-    "dist:dir": "rm -rf dist/* && yarn compile && electron-builder  --dir -c.compression=store -c.mac.identity=null",
+    "dist:dir": "yarn cleandist && yarn compile && electron-builder  --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "electron-builder install-app-deps",
     "codesign_masdev": "electron-osx-sign 'dist/mas/ElectronSecurityScopedBookmarkTestApp.app' --platform=mas --type=development --identity='82740405A7706688285585DF5928676402E99074' --entitlements='build/entitlements.mac.plist' --provisioning-profile='build/security_scoped_bookmark_pp_mac_development.provisionprofile'",
     "codesign_macdev": "electron-osx-sign 'dist/mac/ElectronSecurityScopedBookmarkTestApp.app' --platform=darwin --type=development --identity='82740405A7706688285585DF5928676402E99074' --entitlements='build/entitlements.mac.plist' --provisioning-profile='build/security_scoped_bookmark_pp_mac_development.provisionprofile'  --no-gatekeeper-assess"
@@ -40,11 +41,10 @@
       "//1": "Setting mas.identity=null causes failure",
       "//2": "Having no 'dmg' target means dir also will not be created ",
       "//3": "Do codesigining directly via electron-osx-sign for greater control"
-    }, 
+    },
     "//electron-osx-sign": {
       "//1": "codesign_macdev above - it works, but causes a gatekeeper error. Hence the '-no-gatekeeper-assess' option "
     }
-
   },
   "build": {
     "extends": "node_modules/electron-webpack/out/electron-builder.js",
