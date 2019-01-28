@@ -2,7 +2,7 @@
   "name": "electron-security-scoped-bookmark-test",
   "description": "App to test electrons security scoped bookmarks",
   "author": "rrosen326@gmail.com",
-  "version": "0.1.29",
+  "version": "0.1.30",
   "license": "MIT",
   "scripts": {
     "bumpversion": "npm version --no-git-tag-version patch",
@@ -14,8 +14,8 @@
     "postdist": "yarn codesign_masdev && yarn codesign_macdev",
     "dist:dir": "yarn cleandist && yarn compile && electron-builder  --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "electron-builder install-app-deps",
-    "codesign_masdev": "electron-osx-sign 'dist/mas/ElectronSecurityScopedBookmarkTestApp.app' --platform=mas --type=development --identity='82740405A7706688285585DF5928676402E99074' --entitlements='build/entitlements.mac.plist' --provisioning-profile='build/security_scoped_bookmark_190124.provisionprofile'",
-    "codesign_macdev": "electron-osx-sign 'dist/mac/ElectronSecurityScopedBookmarkTestApp.app' --platform=darwin --type=development --identity='82740405A7706688285585DF5928676402E99074' --entitlements='build/entitlements.mac.plist' --provisioning-profile='build/security_scoped_bookmark_190124.provisionprofile'  --no-gatekeeper-assess",
+    "codesign_masdev": "electron-osx-sign 'dist/mas/ElectronSecurityScopedBookmarkTestApp.app' --platform=mas --type=development --identity='BC5E110FD7606ACFA2A125AB703DA38D211B0958' --entitlements='build/entitlements.mac.plist' --provisioning-profile='build/PP_Dev_bookmarkTest.provisionprofile'",
+    "codesign_macdev": "electron-osx-sign 'dist/mac/ElectronSecurityScopedBookmarkTestApp.app' --platform=darwin --type=development --identity='BC5E110FD7606ACFA2A125AB703DA38D211B0958' --entitlements='build/entitlements.mac.plist' --provisioning-profile='build/PP_Dev_bookmarkTest.provisionprofile'  --no-gatekeeper-assess",
     "codesign": "yarn codesign_masdev && yarn codesign_macdev"
   },
   "dependencies": {

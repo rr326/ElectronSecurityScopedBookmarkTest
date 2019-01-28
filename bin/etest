@@ -44,6 +44,12 @@ def gatekeeper():
     for app in get_all_apps():
         subtitle(f'{str(app)}')
         print_and_run(['spctl', '--assess', '--type', 'exec', '--verbose=4', str(app)], False)
+
+
+@cli.command()
+def identities():
+    title('Identities')
+    print_and_run("security find-identity -p codesigning -v", True)
     
 
 if __name__ == "__main__":
