@@ -54,8 +54,8 @@
         <h4>Invalid bookmarks returned</h4>
         <p><b>Bookmarks: </b> |{{this.bookmarks}}|</p>
         <p>Explanation:
-          <span v-if="this.bookmarks==''">Empty string - Error returned from openDialog</span>
-          <span v-if="this.bookmarks!=''"><b>UNEXPECTED</b> Error - non-string. typeof this.bookmarks: {{typeof this.bookmarks}}</span>
+          <span v-if="this.bookmarks===''">Empty string - Error returned from openDialog</span>
+          <span v-if="this.bookmarks!==''"><b>UNEXPECTED</b> Error - non-string. typeof this.bookmarks: {{typeof this.bookmarks}}</span>
         </p>
       </div>
     </div>

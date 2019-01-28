@@ -50,7 +50,16 @@ def gatekeeper():
 def identities():
     title('Identities')
     print_and_run("security find-identity -p codesigning -v", True)
-    
+
+@cli.command()
+def entitlements():
+    title('Show Embedded Entitlements and Provisioning Profiles')
+    for app in get_all_apps():        
+        subtitle(f'{str(app)}')
+        print('*** Entitlements ***')
+        print_and_run(f'codesign -dvvvv --entitlements - {str(app)}', True)
+        print('\n\n*** Provisioning Profile ***')
+        print_and_run(f'security cms -D -i {str(app)}/Contents/embedded.provisionprofile', True)
 
 if __name__ == "__main__":
     cli()
