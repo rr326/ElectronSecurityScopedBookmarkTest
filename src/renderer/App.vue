@@ -6,20 +6,8 @@
     <div class="card card-body bg-light explanation-block">
       <h3>Overview</h3>
       <p>This tests the implementation of security scoped bookmarks. These are necessary for building MAS (Mac App Store) builds. The only complete documentation is the <a href="https://github.com/electron/electron/pull/11711">Github PR</a>, though there is also some in the <a href="https://electronjs.org/docs/api/dialog#dialogshowopendialogbrowserwindow-options-callback">docs</a>.</p>
-      <h3>Expectations</h3>
-      <ul>
-        <li>In non-MAS build, Bookmarks == []</li>
-        <li>In MAS build:
-          <ul>
-            <li>No error: Bookmarks == [bookmark] (array of bookmarks)</li>
-            <li>Error: Bookmarks == '' (ie: String, not array)</li>
-          </ul>
-        </li>
-      </ul>
-      <h3>This DOES work. </h3>
-      <p>Tested with Electron 4.0.0-beta.8. It probably works with 3.x.x as well, but I have not tested it.</p>
-      <p>If you are having problmems and getting a empty bookmark list with MAS, it means something else is going on.</p>
-    </div> <br>
+    </div>
+    <br>
     <h3>Bookmarks</h3>
     <div class="info-table">
       <table class='table table-striped'>
@@ -29,8 +17,8 @@
             <td>{{bookmarks_set}}</td>
           </tr>
           <tr>
-            <td>Bookmarks</td>
-            <td class="no-overflow">{{bookmarks}}</td>
+            <td>Bookmarks (between ||)</td>
+            <td class="no-overflow">|{{bookmarks}}|</td>
           </tr>
           <tr>
             <td>Bookmarks typeof</td>
@@ -52,11 +40,12 @@
       <div class="alert alert-warning" v-if="!isMas && bookmarks_set">Not MAS build. Bookmarks not set.</div>
       <div class="alert alert-danger" v-if="isMas && bookmarks_set && !validBookmarks">
         <h4>Invalid bookmarks returned</h4>
-        <p><b>Bookmarks: </b> |{{this.bookmarks}}|</p>
+        <p><b>Bookmarks: </b> |{{bookmarks}}|</p>
         <p>Explanation:
           <span v-if="this.bookmarks===''">Empty string - Error returned from openDialog</span>
-          <span v-if="this.bookmarks!==''"><b>UNEXPECTED</b> Error - non-string. typeof this.bookmarks: {{typeof this.bookmarks}}</span>
+          <span v-if="this.bookmarks!==''"><b>UNEXPECTED</b> Error - non-string. typeof this.bookmarks = {{typeof bookmarks}}</span>
         </p>
+        <div v-if="(this.bookmarks instanceof Array) && this.bookmarks.length === 0">MAS build returned empty array. This is strange.</div>
       </div>
     </div>
 
@@ -76,7 +65,32 @@
         </tbody>
       </table>
     </div>
-
+    <br>
+    <h3>Expectations from <a href="https://github.com/electron/electron/pull/11711">Documentation</a></h3>
+    <p>Doc link: https://github.com/electron/electron/pull/11711</p>
+    <ul>
+      <li>The <code>bookmarks</code> array will be empty if the app is not bundled for <code>mas</code></li>
+      <li>If there was an error obtaining the bookmark, an empty string will be returned <code>""</code>
+        <ul>
+          <li>Errors may be because of signing issues, incorrect entitlements, etc</li>
+        </ul>
+      </li>
+      <li>For <code>showSaveDialog</code> the <code>filename</code> is returned along with a <code>bookmark</code> string</li>
+    </ul>
+    <h3>Expectations from reading the code</h3>
+    <p>Code location (electron source): <code>file_dialog_mac.mm</code> -> <code>OpenDialogCompletion</code> and <code>GetBookMarkDataFromNSURL</code></p>
+    <ul>
+      <li>Non-MAS build: <code>bookmarks === undefined</code> <span class="badge badge-success">VERIFIED</span></li>
+      <li>MAS build</li>
+      <ul>
+        <li><code>securityScopedBookmarks: false ==> bookmarks === undefined</code> <span class="badge badge-dahger">FAILED! Valid BM Returned!</span></li>
+        <li><code>securityScopedBookmarks: true</code> </li>
+        <ul>
+          <li>Success: <code>bookmarks === ["SLKDJFLKSDJLSJDLFJSLKJFLS..SJLD"]</code> </li>
+          <li>Error: <code>bookmarks === ['']</code></li>
+        </ul>
+      </ul>
+    </ul>
   </div>
 </template>
 
@@ -107,21 +121,19 @@ export default {
       this.bookmarks_extra_param = "not set"
     },
     showOpenDialog() {
-      let self = this
+      let vueinst = this
 
       dialog.showOpenDialog({
-        title: 'Select directory to store your FileSimple data and files',
+        title: 'Select FileSimple Directory',
+        message: "Select directory to store your FileSimple data and files",
         defaultPath: app.getPath('home'),
-        buttonLabel: 'Select',
+        buttonLabel: 'Select Directory',
         properties: ["openDirectory", "createDirectory"],
-        securityScopedBookmarks: true,
+       // securityScopedBookmarks: false,
       }, (filePaths, bookmarks) => {
-        const fp = filePaths,
-          bm = bookmarks
-
         if (filePaths) {
-          self.bookmarks_set = true
-          self.bookmarks = bookmarks
+          vueinst.bookmarks_set = true
+          vueinst.bookmarks = bookmarks
         } else {
           alert('No directory selected. You must select a directory to continue.') // eslint-disable-line no-alert
         }

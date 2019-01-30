@@ -1,10 +1,11 @@
 'use strict'
 
-import electron, { app, BrowserWindow } from 'electron'
+import electron, { app, BrowserWindow, Menu } from 'electron'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
+const enableDevtools = true // process.env.NODE_ENV !== 'production'
+const devServer = process.env.NODE_ENV !== 'production'
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow
@@ -13,11 +14,11 @@ function createMainWindow() {
   const workarea = electron.screen.getPrimaryDisplay().workAreaSize
   const window = new BrowserWindow({width: workarea.width/2, height: workarea.height})
 
-  if (isDevelopment) {
+  if (enableDevtools) {
     window.webContents.openDevTools()
   }
 
-  if (isDevelopment) {
+  if (devServer) {
     window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`)
   }
   else {
@@ -57,4 +58,22 @@ app.on('activate', () => {
 // create main BrowserWindow when electron is ready
 app.on('ready', () => {
   mainWindow = createMainWindow()
+
+  // Enable copy / paste
+  const template = [{
+        label: "Application",
+        submenu: [
+            { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+            { type: "separator" },
+            { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+        ]}, {
+        label: "Edit",
+        submenu: [
+            { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+            { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+            { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+        ]}
+    ];
+
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 })

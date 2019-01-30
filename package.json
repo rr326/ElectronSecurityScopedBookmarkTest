@@ -2,7 +2,7 @@
   "name": "electron-security-scoped-bookmark-test",
   "description": "App to test electrons security scoped bookmarks",
   "author": "rrosen326@gmail.com",
-  "version": "0.1.32",
+  "version": "0.1.49",
   "license": "MIT",
   "scripts": {
     "bumpversion": "npm version --no-git-tag-version patch",
