@@ -91,7 +91,7 @@
         <li><code>securityScopedBookmarks: false ==> bookmarks === []</code> <span class="badge badge-warning">Sometimes</span></li>
         <li><code>securityScopedBookmarks: true</code>  </li>
         <ul>
-          <li>Success: <code>bookmarks === ["SLKDJFLKSDJLSJDLFJSLKJFLS..SJLD"]</code>  <span class="badge badge-warning">Sometimes</span </li>
+          <li>Success: <code>bookmarks === ["SLKDJFLKSDJLSJDLFJSLKJFLS..SJLD"]</code>  <span class="badge badge-warning">Sometimes</span> </li>
           <li>Error: <code>bookmarks === ['']</code> <span class="badge badge-secondary">Not Seen</span></li>
         </ul>
       </ul>

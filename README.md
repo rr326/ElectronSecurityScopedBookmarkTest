@@ -1,13 +1,42 @@
 # Electron Security Scoped Bookmark Test App
 
-I had a TON of trouble getting security scoped bookmarks to work, as per [this pr](https://github.com/electron/electron/pull/11711).
-I built this little test app to show how it wasn't working, and lo and behold, it worked! So then I was able to 
-track down on my real app where I went wrong.  
+This tests the implementation of security scoped bookmarks. These are necessary for building MAS (Mac App Store) builds. The only complete documentation is the <a href="https://github.com/electron/electron/pull/11711">Github PR</a>, though there is also some in the <a href="https://electronjs.org/docs/api/dialog#dialogshowopendialogbrowserwindow-options-callback">docs</a>.</p>
 
-So the first thing to do is get this to build and work properly. You'll need a proper app bundle id from apple, signing certificates, a provisioning profile,  etc.
-The scope of describing all of that is too much for here. But if you get all of that to work, then you'll see your dist/mas build work.  (A bookmark will be properly returned.) 
-Then go back and see what differs in your real repo.  
+## Installing
+```
+mkdir bookmarkTest
+cd bookmarkTest
+git clone https://github.com/rr326/ElectronSecurityScopedBookmarkTest .
+yarn install
+```
 
-Note - you should test your mas-dev build both on your development machine, but also on a separate, clean machine. Ideally a separate physical machine if you have one but a Virtual Machine should be fine. (Though if you get into problems on a VM you start wondering if it is the VM or the app. And I've found getting VMs bot build properly is a huge project in iteself. Nothing is easy!)
+Now you need:
+1. Mac Developer Identity
+2. A Develloer Provisioning Profile with Device IDs for your development machine(s)
+3. Update `package.json` ==> `macDeveloperIdentityHash` and `provisionprofile`
+    * `macDeveloperIdentityHash` - try `security find-identity -p codesigning -v` and look for `Mac Developer: ...`
+    * `provisionprofile` - this is a "Mac Provisioning Profile (Development)" exported from your [Developer Account](https://developer.apple.com/account/mac/profile/limited)
 
-Good luck on your debugging!
+You can try [this page](https://github.com/nwjs/nw.js/wiki/Mac-App-Store-%28MAS%29-Submission-Guideline#first-steps) for some help on that.
+
+When you've done that, try: `yarn dist`
+
+Hopefully it will build and sign.
+
+Then try: `open dist/mas/ElectronSecurityScopedBookmarkTestApp.app`
+
+
+## What *Should* Happen
+Source: Reading the code at [atom/browser/ui/file_dialog_mac.mm](https://github.com/electron/electron/blob/master/atom/browser/ui/file_dialog_mac.mm). Particularly [OpenDialogComplettion](https://github.com/electron/electron/blob/c8c1be7ae546da4679a22b6872f023c9786df663/atom/browser/ui/file_dialog_mac.mm#L287-L313) and [GetBookMarkDataFromNSURL](https://github.com/electron/electron/blob/c8c1be7ae546da4679a22b6872f023c9786df663/atom/browser/ui/file_dialog_mac.mm#L228-L251)
+<ul>
+  <li>Non-MAS build: <code>bookmarks === undefined</code></li>
+  <li>MAS build</li>
+  <ul>
+    <li><code>securityScopedBookmarks: false ==> bookmarks === []</code> </li>
+    <li><code>securityScopedBookmarks: true</code>  </li>
+    <ul>
+      <li>Success: <code>bookmarks === ["SLKDJFLKSDJLSJDLFJSLKJFLS..SJLD"]</code> </li>
+      <li>Error: <code>bookmarks === ['']</code></li>
+    </ul>
+  </ul>
+</ul>
