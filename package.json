@@ -1,12 +1,11 @@
 {
-  "//": "** CHANGE THE BELOW TWO LINES **",
+  "//": "// The rest doesn't need to change",
   "macDeveloperIdentityHash": "BC5E110FD7606ACFA2A125AB703DA38D211B0958",
   "provisionprofile": "build/PP_Dev_bookmarkTest.provisionprofile",
-  "//": "// The rest doesn't need to change",
   "name": "electron-security-scoped-bookmark-test",
   "description": "App to test electrons security scoped bookmarks",
   "author": "rrosen326@gmail.com",
-  "version": "0.1.57",
+  "version": "0.1.58",
   "license": "MIT",
   "scripts": {
     "bumpversion": "npm version --no-git-tag-version patch",
