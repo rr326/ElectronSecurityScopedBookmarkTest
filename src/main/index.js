@@ -1,22 +1,17 @@
 'use strict'
 
-import electron, { app, BrowserWindow, Menu } from 'electron'
+import electron, { app, BrowserWindow, Menu, dialog } from 'electron'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
 
-const enableDevtools = true // process.env.NODE_ENV !== 'production'
+const enableDevtools = process.env.NODE_ENV !== 'production'
 const devServer = process.env.NODE_ENV !== 'production'
 
-// global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow
 
-function createMainWindow() {
+function createRendererWindow() {
   const workarea = electron.screen.getPrimaryDisplay().workAreaSize
-  const window = new BrowserWindow({width: workarea.width/2, height: workarea.height})
-
-  if (enableDevtools) {
-    window.webContents.openDevTools()
-  }
+  const window = new BrowserWindow({width: workarea.width/2, height: workarea.height, x:workarea.width/2, y:0})
 
   if (devServer) {
     window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`)
@@ -29,10 +24,6 @@ function createMainWindow() {
     }))
   }
 
-  window.on('closed', () => {
-    mainWindow = null
-  })
-
   window.webContents.on('devtools-opened', () => {
     window.focus()
     setImmediate(() => {
@@ -43,21 +34,45 @@ function createMainWindow() {
   return window
 }
 
-// quit application when all windows are closed
+
+function launcherCallback(browserWindow, buttonNumber) {
+  console.log('buttonNumber Pressed: ', buttonNumber)
+  // Now show dialog again
+  if (buttonNumber === 0) {
+    app.exit()
+    return
+  }
+  showLauncherDialog(browserWindow)
+}
+
+function showLauncherDialog(browserWindow) {
+  dialog.showMessageBox(browserWindow, {
+    type: 'info',
+    buttons: ['exit', 'securityScopedBookmarks = false', 'securityScopedBookmarks = true'],
+    defaultId: 2,
+    title: 'launcher window',
+    message: 'Test showOpenDialog() in main process',
+  }, (buttonNumber) => {launcherCallback(browserWindow, buttonNumber)})
+}
+
+function createLauncherWindow() {
+  const window = new BrowserWindow({width: 800, height: 500, x:0, y:0})
+  showLauncherDialog(window)
+  return window
+}
+
+
+/**
+ * Main()
+ */
+
 app.on('window-all-closed', () => {
   app.quit()
 })
 
-app.on('activate', () => {
-  // on macOS it is common to re-create a window even after all windows have been closed
-  if (mainWindow === null) {
-    mainWindow = createMainWindow()
-  }
-})
-
-// create main BrowserWindow when electron is ready
 app.on('ready', () => {
-  mainWindow = createMainWindow()
+  mainWindow = createLauncherWindow()
+  createRendererWindow()
 
   // Enable copy / paste
   const template = [{
@@ -65,6 +80,8 @@ app.on('ready', () => {
         submenu: [
             { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
             { type: "separator" },
+            { label: "Toggle Devtools (if enabled) - current window", role: 'toggleDevTools'},
+            { label: "Reload - current window", role: 'reload'},
             { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
         ]}, {
         label: "Edit",

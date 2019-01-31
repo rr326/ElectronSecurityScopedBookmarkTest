@@ -83,11 +83,11 @@
       <li>Non-MAS build: <code>bookmarks === undefined</code> <span class="badge badge-success">VERIFIED</span></li>
       <li>MAS build</li>
       <ul>
-        <li><code>securityScopedBookmarks: false ==> bookmarks === undefined</code> <span class="badge badge-dahger">FAILED! Valid BM Returned!</span></li>
-        <li><code>securityScopedBookmarks: true</code> </li>
+        <li><code>securityScopedBookmarks: false ==> bookmarks === []</code> <span class="badge badge-warning">Sometimes</span></li>
+        <li><code>securityScopedBookmarks: true</code>  </li>
         <ul>
-          <li>Success: <code>bookmarks === ["SLKDJFLKSDJLSJDLFJSLKJFLS..SJLD"]</code> </li>
-          <li>Error: <code>bookmarks === ['']</code></li>
+          <li>Success: <code>bookmarks === ["SLKDJFLKSDJLSJDLFJSLKJFLS..SJLD"]</code>  <span class="badge badge-warning">Sometimes</span </li>
+          <li>Error: <code>bookmarks === ['']</code> <span class="badge badge-secondary">Not Seen</span></li>
         </ul>
       </ul>
     </ul>
@@ -129,7 +129,7 @@ export default {
         defaultPath: app.getPath('home'),
         buttonLabel: 'Select Directory',
         properties: ["openDirectory", "createDirectory"],
-       // securityScopedBookmarks: false,
+       securityScopedBookmarks: true,
       }, (filePaths, bookmarks) => {
         if (filePaths) {
           vueinst.bookmarks_set = true
