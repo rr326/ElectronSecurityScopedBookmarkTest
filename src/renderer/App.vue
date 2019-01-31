@@ -13,6 +13,9 @@
       <table class='table table-striped'>
         <tbody>
           <tr>
+            <td>securityScopedBookmarksSetting set</td>
+            <td>{{securityScopedBookmarksSetting}}</td>
+          </tr>          <tr>
             <td>Bookmarks set</td>
             <td>{{bookmarks_set}}</td>
           </tr>
@@ -30,7 +33,9 @@
     </div>
     <br>
 
-    <button type='button' class="btn btn-primary" @click='showOpenDialog'> Click to select directory </button>
+    <button type='button' class="btn btn-primary" @click='showOpenDialogTrue'> Select: SSB=true </button>
+    <button type='button' class="btn btn-primary" @click='showOpenDialogFalse'> Select: SSB=false </button>
+
     <button type='button' class="btn btn-secondary" @click='reset'> Reset </button>
     <br>
     <br>
@@ -99,6 +104,9 @@ const {
   dialog,
   app
 } = require('electron').remote
+import {
+  showOpenDialog
+} from '../shared/dialog.js'
 
 export default {
   name: 'app',
@@ -106,7 +114,8 @@ export default {
     return {
       bookmarks: null,
       bookmarks_set: false,
-      bookmarks_extra_param: null
+      bookmarks_extra_param: null,
+      securityScopedBookmarksSetting: "NA"
     }
   },
   mounted() {
@@ -119,25 +128,18 @@ export default {
         }],
         this.bookmarks_set = false
       this.bookmarks_extra_param = "not set"
+      securityScopedBookmarksSetting = "NA"
     },
-    showOpenDialog() {
-      let vueinst = this
-
-      dialog.showOpenDialog({
-        title: 'Select FileSimple Directory',
-        message: "Select directory to store your FileSimple data and files",
-        defaultPath: app.getPath('home'),
-        buttonLabel: 'Select Directory',
-        properties: ["openDirectory", "createDirectory"],
-       securityScopedBookmarks: true,
-      }, (filePaths, bookmarks) => {
-        if (filePaths) {
-          vueinst.bookmarks_set = true
-          vueinst.bookmarks = bookmarks
-        } else {
-          alert('No directory selected. You must select a directory to continue.') // eslint-disable-line no-alert
-        }
-      })
+    setResults(results) {
+      this.bookmarks_set = true
+      this.bookmarks = results.bookmarks
+      this.securityScopedBookmarksSetting = results.securityScopedBookmarks
+    },
+    showOpenDialogTrue() {
+      showOpenDialog(dialog, 'Renderer', true, this.setResults)
+    },
+    showOpenDialogFalse() {
+      showOpenDialog(dialog, 'Renderer', false, this.setResults)
     }
   },
   computed: {

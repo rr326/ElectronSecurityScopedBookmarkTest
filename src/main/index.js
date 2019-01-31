@@ -1,8 +1,18 @@
 'use strict'
 
-import electron, { app, BrowserWindow, Menu, dialog } from 'electron'
+import electron, {
+  app,
+  BrowserWindow,
+  Menu,
+  dialog
+} from 'electron'
 import * as path from 'path'
-import { format as formatUrl } from 'url'
+import {
+  format as formatUrl
+} from 'url'
+import {
+  showOpenDialog
+} from '../shared/dialog.js'
 
 const enableDevtools = process.env.NODE_ENV !== 'production'
 const devServer = process.env.NODE_ENV !== 'production'
@@ -11,7 +21,12 @@ let mainWindow
 
 function createRendererWindow() {
   const workarea = electron.screen.getPrimaryDisplay().workAreaSize
-  const window = new BrowserWindow({width: workarea.width/2, height: workarea.height, x:workarea.width/2, y:0})
+  const window = new BrowserWindow({
+    width: workarea.width / 2,
+    height: workarea.height,
+    x: workarea.width / 2,
+    y: 0
+  })
 
   if (devServer) {
     window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`)
@@ -34,7 +49,6 @@ function createRendererWindow() {
   return window
 }
 
-
 function launcherCallback(browserWindow, buttonNumber) {
   console.log('buttonNumber Pressed: ', buttonNumber)
   // Now show dialog again
@@ -42,6 +56,16 @@ function launcherCallback(browserWindow, buttonNumber) {
     app.exit()
     return
   }
+  if (buttonNumber === 1) {
+    showOpenDialog(dialog, 'Main', false)
+  } else if (buttonNumber === 2) {
+    showOpenDialog(dialog, 'Main', true)
+  }
+  else {
+    throw new Error(`Invalid button number: ${buttonNumber}`)
+  }
+
+  // Re-show main menu
   showLauncherDialog(browserWindow)
 }
 
@@ -52,15 +76,21 @@ function showLauncherDialog(browserWindow) {
     defaultId: 2,
     title: 'launcher window',
     message: 'Test showOpenDialog() in main process',
-  }, (buttonNumber) => {launcherCallback(browserWindow, buttonNumber)})
+  }, (buttonNumber) => {
+    launcherCallback(browserWindow, buttonNumber)
+  })
 }
 
 function createLauncherWindow() {
-  const window = new BrowserWindow({width: 800, height: 500, x:0, y:0})
+  const window = new BrowserWindow({
+    width: 750,
+    height: 500,
+    x: 0,
+    y: 0
+  })
   showLauncherDialog(window)
   return window
 }
-
 
 /**
  * Main()
@@ -76,21 +106,49 @@ app.on('ready', () => {
 
   // Enable copy / paste
   const template = [{
-        label: "Application",
-        submenu: [
-            { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
-            { type: "separator" },
-            { label: "Toggle Devtools (if enabled) - current window", role: 'toggleDevTools'},
-            { label: "Reload - current window", role: 'reload'},
-            { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
-        ]}, {
-        label: "Edit",
-        submenu: [
-            { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-            { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-            { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-        ]}
-    ];
+    label: "Application",
+    submenu: [
+    {
+      label: "About Application",
+      selector: "orderFrontStandardAboutPanel:"
+    },
+    {
+      type: "separator"
+    },
+    {
+      label: "Toggle Devtools (if enabled) - current window",
+      role: 'toggleDevTools'
+    },
+    {
+      label: "Reload - current window",
+      role: 'reload'
+    },
+    {
+      label: "Quit",
+      accelerator: "Command+Q",
+      click: function() {
+        app.quit();
+      }
+    }]
+  }, {
+    label: "Edit",
+    submenu: [
+    {
+      label: "Copy",
+      accelerator: "CmdOrCtrl+C",
+      selector: "copy:"
+    },
+    {
+      label: "Paste",
+      accelerator: "CmdOrCtrl+V",
+      selector: "paste:"
+    },
+    {
+      label: "Select All",
+      accelerator: "CmdOrCtrl+A",
+      selector: "selectAll:"
+    }]
+  }];
 
-    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 })
