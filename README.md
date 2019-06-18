@@ -27,7 +27,7 @@ Then try: `open dist/mas/ElectronSecurityScopedBookmarkTestApp.app`
 
 
 ## What *Should* Happen
-Source: Reading the code at [atom/browser/ui/file_dialog_mac.mm](https://github.com/electron/electron/blob/c8c1be7ae546da4679a22b6872f023c9786df663/atom/browser/ui/file_dialog_mac.mm). Particularly [OpenDialogComplettion](https://github.com/electron/electron/blob/c8c1be7ae546da4679a22b6872f023c9786df663/atom/browser/ui/file_dialog_mac.mm#L287-L313) and [GetBookMarkDataFromNSURL](https://github.com/electron/electron/blob/c8c1be7ae546da4679a22b6872f023c9786df663/atom/browser/ui/file_dialog_mac.mm#L228-L251)
+Source: Reading the code at [atom/browser/ui/file_dialog_mac.mm](https://github.com/electron/electron/blob/c8c1be7ae546da4679a22b6872f023c9786df663/atom/browser/ui/file_dialog_mac.mm). Particularly [OpenDialogCompletion](https://github.com/electron/electron/blob/c8c1be7ae546da4679a22b6872f023c9786df663/atom/browser/ui/file_dialog_mac.mm#L287-L313) and [GetBookMarkDataFromNSURL](https://github.com/electron/electron/blob/c8c1be7ae546da4679a22b6872f023c9786df663/atom/browser/ui/file_dialog_mac.mm#L228-L251)
 <ul>
   <li>Non-MAS build: <code>bookmarks === undefined</code></li>
   <li>MAS build</li>
