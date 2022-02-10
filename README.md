@@ -1,3 +1,9 @@
+# Deprecated
+
+No longer maintained.
+
+<hr>
+
 # Electron Security Scoped Bookmark Test App
 
 This tests the implementation of security scoped bookmarks. These are necessary for building MAS (Mac App Store) builds. The only complete documentation is the <a href="https://github.com/electron/electron/pull/11711">Github PR</a>, though there is also some in the <a href="https://electronjs.org/docs/api/dialog#dialogshowopendialogbrowserwindow-options-callback">docs</a>.</p>
